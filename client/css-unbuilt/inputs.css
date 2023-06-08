@@ -1,0 +1,155 @@
+@layer components {
+	.range-container {
+		@apply grid place-items-center grid-cols-10 grid-rows-2 gap-2;
+	}
+	.range-container > label {
+		@apply block col-span-10 row-span-1;
+	}
+	.range-container > input {
+		@apply col-span-9 grow-0;
+	}
+	.range-container > span {
+		@apply col-span-1 w-full font-mono inline-grid place-content-end;
+	}
+
+	.checkbox-container {
+		@apply flex flex-row justify-center;
+	}
+}
+
+/* buttons */
+input[type='submit'],
+.button {
+	@apply p-2 border-2 min-w-[1.5rem] rounded-md text-base font-pop font-normal transition-colors dark:bg-emerald-600 dark:border-emerald-600 dark:hover:bg-emerald-500 dark:hover:border-emerald-500 dark:active:bg-emerald-800 dark:active:border-emerald-400 focus-visible:dark:border-emerald-400 disabled:dark:bg-emerald-800 disabled:dark:border-emerald-700 disabled:dark:text-gray-100;
+}
+
+/* range sliders */
+/* partial credit to https://codepen.io/noahblon/pen/OyajvN */
+input[type='range'],
+.input-range {
+	@apply h-5 w-full overflow-hidden rounded-full transition-shadow cursor-pointer dark:bg-neutral-700;
+	appearance: none;
+
+	/* fake border using shadow, normal border overlaps thumb */
+	box-shadow: inset 0 0 0 2px theme('colors.neutral.700');
+}
+
+input[type='range']:focus-visible {
+	box-shadow: inset 0 0 0 2px theme('colors.neutral.500');
+}
+
+/*
+ * 1. Set to 0 width and remove border for a slider without a thumb
+ * 2. Shadow is negative the full width of the input and has a spread 
+ *    of the width of the input.
+ */
+::-webkit-slider-thumb {
+	@apply w-5 h-5 rounded-full border-solid border-8 transition-all dark:bg-emerald-600 dark:border-emerald-600 disabled:dark:bg-emerald-800 disabled:dark:border-emerald-700;
+
+	appearance: none;
+
+	box-shadow: calc(-100vw - theme('spacing.5') * 0.5) 0 0 100vw
+		theme('colors.emerald.800');
+}
+
+:hover::-webkit-slider-thumb {
+	@apply dark:bg-emerald-500 dark:border-emerald-500;
+
+	box-shadow: calc(-100vw - theme('spacing.5') * 0.5) 0 0 100vw
+		theme('colors.emerald.700');
+}
+
+:active::-webkit-slider-thumb,
+:focus-visible::-webkit-slider-thumb {
+	@apply dark:bg-emerald-800 dark:border-emerald-400 border-2;
+
+	box-shadow: calc(-100vw - theme('spacing.5') * 0.5) 0 0 100vw
+		theme('colors.emerald.600');
+}
+
+:active::-webkit-slider-thumb {
+	@apply cursor-none;
+}
+
+/* end credit */
+
+/* binary input (checkboxes) */
+input[type='checkbox'] {
+	@apply overflow-hidden w-5 h-5 m-2 mr-0 rounded-sm border-2 transition-all dark:bg-neutral-700 dark:border-neutral-700 hover:dark:border-neutral-500 focus-visible:dark:border-neutral-500 checked:dark:bg-emerald-600 checked:dark:border-emerald-600 checked:hover:dark:bg-emerald-500 checked:hover:dark:border-emerald-500 active:dark:bg-emerald-800 active:dark:border-emerald-600 checked:active:dark:bg-emerald-800 checked:active:dark:border-emerald-400 checked:focus-visible:dark:border-emerald-400 grid place-items-center;
+
+	appearance: none;
+}
+
+/* credit to https://www.w3schools.com/howto/howto_css_custom_checkbox.asp for check mark */
+input[type='checkbox']::after {
+	@apply opacity-0 transition-[opacity,width,height,border] block w-0 h-0 border-r-2 border-b-2 border-solid rotate-45 dark:border-white;
+	content: '';
+}
+
+input[type='checkbox']:checked::after {
+	@apply opacity-100 w-1 h-3;
+}
+
+input[type='checkbox'] + label {
+	@apply grid place-items-center pl-2;
+}
+
+/* text and number input */
+.horizontal-scroll {
+	@apply overflow-x-scroll;
+}
+
+input[type='text'],
+input[type='number'],
+.input-text {
+	@apply text-base 2xl:text-lg font-light font-ridge dark:placeholder:text-neutral-400 dark:text-white;
+}
+
+:not(.input-text) > input[type='text'],
+:not(.input-text) > input[type='number'],
+.input-text {
+	@apply p-2 block rounded-md border-2 transition-colors dark:bg-neutral-700 dark:border-neutral-700 focus-visible:dark:border-neutral-500;
+}
+
+.input-text {
+	@apply flex flex-row align-middle justify-center focus-within:dark:border-neutral-500;
+}
+
+.input-text > span {
+	@apply flex-none grid place-items-center;
+}
+
+.input-text > span.input-begin {
+	@apply mr-2;
+}
+
+.input-text > span.input-end {
+	@apply ml-2;
+}
+
+.input-text > input[type='text'],
+.input-text > input[type='number'] {
+	@apply bg-transparent w-full inline border-0 m-0 p-0;
+}
+
+/* https://stackoverflow.com/a/26024834/17116611 */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+}
+
+/* select input */
+select {
+	@apply p-2 rounded-md border-2 transition-colors dark:bg-neutral-700 dark:border-neutral-700 focus-visible:dark:border-neutral-500;
+}
+
+/* file input */
+
+.drop-zone-over {
+	@apply bg-neutral-700;
+}
+
+/* 'x' button */
+.close-button {
+	@apply w-8 h-8 rounded-full center absolute top-2 right-2 border-2 dark:border-opacity-0 dark:hover:border-opacity-100 dark:focus-visible:border-opacity-100 dark:border-neutral-500 transition-all dark:bg-neutral-800 dark:active:bg-neutral-500 dark:bg-opacity-50 dark:hover:bg-opacity-70;
+}

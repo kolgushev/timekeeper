@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@layer base {
+	:root {
+		@apply font-pop;
+	}
+
+	* {
+		@apply outline-none;
+	}
+}
+
+@layer components {
+	.center {
+		@apply grid place-items-center;
+	}
+
+	.inner-drop-shadow {
+		box-shadow: 1px 14px 10px -10px #00000040 inset;
+	}
+}
+
+#fullscreen-img-preview {
+	@apply transition duration-200 opacity-100 backdrop-blur-md;
+}
+
+#fullscreen-img-preview.transparent,
+#fullscreen-img-preview.transparent * {
+	@apply pointer-events-none;
+}
+
+#fullscreen-img-preview.transparent {
+	@apply opacity-0 backdrop-blur-0;
+}
+
+#preview-controls > button {
+	@apply flex-auto py-4;
+}
+
+/* scroll */
+/* credit to https://css-tricks.com/custom-scrollbars-in-webkit/ */
+#tasks::-webkit-scrollbar {
+	appearance: none;
+	@apply w-3;
+}
+
+#tasks::-webkit-scrollbar-track {
+	@apply dark:bg-neutral-700 rounded-none rounded-r-md overflow-hidden;
+}
+
+#tasks::-webkit-scrollbar-thumb {
+	@apply rounded-md dark:bg-neutral-500;
+
+	box-shadow: 0 0.375rem 0 0 theme('colors.neutral.500'),
+		0 -0.375rem 0 0 theme('colors.neutral.500');
+}
+/* end credit */
+
+.image-preview > img,
+.img-fit {
+	@apply object-contain w-full h-full dark:bg-zinc-700;
+}
+
+img {
+	@apply transition;
+}
+
+img:focus-visible {
+	@apply contrast-less:contrast-50 brightness-200;
+}
