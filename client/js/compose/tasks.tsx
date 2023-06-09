@@ -57,7 +57,7 @@ const TaskInput: FC<{
 	const [taskName, setTaskName] = useState('')
 	const [color, setColor] = useState(0)
 
-	const onFormSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+	const onFormSubmit: FormEventHandler<HTMLElement> = (event) => {
 		const trimmed = taskName.trim()
 		if (trimmed !== '') {
 			props.onFormSubmit(trimmed, color)
@@ -145,7 +145,11 @@ const Task: FC<
 			</div>
 			{/* play button */}
 			<button
-				className="button w-14 h-14 self-end !rounded-full shadow-lg flex justify-center justify-items-center items-center"
+				className={`button w-14 h-14 self-end !rounded-full shadow-lg flex justify-center justify-items-center items-center ${
+					props.active
+						? 'bg-emerald-500 border-emerald-400 focus-visible:border-emerald-200'
+						: 'bg-emerald-600 border-emerald-600 focus-visible:border-emerald-300'
+				}`}
 				onClick={props.onActivate}
 			>
 				{props.active ? <FaPause></FaPause> : <FaPlay></FaPlay>}

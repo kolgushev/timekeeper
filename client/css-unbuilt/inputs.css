@@ -20,14 +20,18 @@
 /* buttons */
 input[type='submit'],
 .button {
-	@apply p-2 border-2 min-w-[1.5rem] rounded-md text-base font-pop font-normal transition-colors active:transition-none dark:bg-emerald-600 dark:border-emerald-600 dark:hover:bg-emerald-500 dark:hover:border-emerald-500 dark:active:bg-emerald-800 dark:active:border-emerald-400 focus-visible:dark:border-emerald-400 disabled:dark:bg-emerald-800 disabled:dark:border-emerald-700 disabled:dark:text-gray-100;
+	@apply p-2 border-2 min-w-[1.5rem] rounded-md text-base font-pop font-normal transition-colors active:transition-none hover:bg-emerald-500 hover:border-emerald-500 active:bg-emerald-800 active:border-emerald-400 disabled:bg-emerald-800 disabled:border-emerald-700 disabled:text-gray-100;
+}
+
+input[type='submit'] {
+	@apply bg-emerald-600 border-emerald-600 focus-visible:border-emerald-300;
 }
 
 /* range sliders */
 /* partial credit to https://codepen.io/noahblon/pen/OyajvN */
 input[type='range'],
 .input-range {
-	@apply h-5 w-full overflow-hidden rounded-full transition-shadow cursor-pointer dark:bg-neutral-700;
+	@apply h-5 w-full overflow-hidden rounded-full transition-shadow cursor-pointer bg-neutral-700;
 	appearance: none;
 
 	/* fake border using shadow, normal border overlaps thumb */
@@ -44,7 +48,7 @@ input[type='range']:focus-visible {
  *    of the width of the input.
  */
 ::-webkit-slider-thumb {
-	@apply w-5 h-5 rounded-full border-solid border-8 transition-all dark:bg-emerald-600 dark:border-emerald-600 disabled:dark:bg-emerald-800 disabled:dark:border-emerald-700;
+	@apply w-5 h-5 rounded-full border-solid border-8 transition-all bg-emerald-600 border-emerald-600 disabled:bg-emerald-800 disabled:border-emerald-700;
 
 	appearance: none;
 
@@ -53,7 +57,7 @@ input[type='range']:focus-visible {
 }
 
 :hover::-webkit-slider-thumb {
-	@apply dark:bg-emerald-500 dark:border-emerald-500;
+	@apply bg-emerald-500 border-emerald-500;
 
 	box-shadow: calc(-100vw - theme('spacing.5') * 0.5) 0 0 100vw
 		theme('colors.emerald.700');
@@ -61,7 +65,7 @@ input[type='range']:focus-visible {
 
 :active::-webkit-slider-thumb,
 :focus-visible::-webkit-slider-thumb {
-	@apply dark:bg-emerald-800 dark:border-emerald-400 border-2;
+	@apply bg-emerald-800 border-emerald-300 border-2;
 
 	box-shadow: calc(-100vw - theme('spacing.5') * 0.5) 0 0 100vw
 		theme('colors.emerald.600');
@@ -75,14 +79,14 @@ input[type='range']:focus-visible {
 
 /* binary input (checkboxes) */
 input[type='checkbox'] {
-	@apply overflow-hidden w-5 h-5 m-2 mr-0 rounded-sm border-2 transition-all dark:bg-neutral-700 dark:border-neutral-700 hover:dark:border-neutral-500 focus-visible:dark:border-neutral-500 checked:dark:bg-emerald-600 checked:dark:border-emerald-600 checked:hover:dark:bg-emerald-500 checked:hover:dark:border-emerald-500 active:dark:bg-emerald-800 active:dark:border-emerald-600 checked:active:dark:bg-emerald-800 checked:active:dark:border-emerald-400 checked:focus-visible:dark:border-emerald-400 grid place-items-center;
+	@apply overflow-hidden w-5 h-5 m-2 mr-0 rounded-sm border-2 transition-all bg-neutral-700 border-neutral-700 hover:border-neutral-500 focus-visible:border-neutral-500 checked:bg-emerald-600 checked:border-emerald-600 checked:hover:bg-emerald-500 checked:hover:border-emerald-500 active:bg-emerald-800 active:border-emerald-600 checked:active:bg-emerald-800 checked:active:border-emerald-400 checked:focus-visible:border-emerald-300 grid place-items-center;
 
 	appearance: none;
 }
 
 /* credit to https://www.w3schools.com/howto/howto_css_custom_checkbox.asp for check mark */
 input[type='checkbox']::after {
-	@apply opacity-0 transition-[opacity,width,height,border] block w-0 h-0 border-r-2 border-b-2 border-solid rotate-45 dark:border-white;
+	@apply opacity-0 transition-[opacity,width,height,border] block w-0 h-0 border-r-2 border-b-2 border-solid rotate-45 border-white;
 	content: '';
 }
 
@@ -102,17 +106,17 @@ input[type='checkbox'] + label {
 input[type='text'],
 input[type='number'],
 .input-text {
-	@apply text-base 2xl:text-lg font-light font-ridge dark:placeholder:text-neutral-400 dark:text-white;
+	@apply text-base 2xl:text-lg font-light font-ridge placeholder:text-neutral-400 text-white;
 }
 
 :not(.input-text) > input[type='text'],
 :not(.input-text) > input[type='number'],
 .input-text {
-	@apply p-2 block rounded-md border-2 transition-colors dark:bg-neutral-700 dark:border-neutral-700 focus-visible:dark:border-neutral-500;
+	@apply p-2 block rounded-md border-2 transition-colors bg-neutral-700 border-neutral-700 focus-visible:border-neutral-500;
 }
 
 .input-text {
-	@apply flex flex-row align-middle justify-center focus-within:dark:border-neutral-500;
+	@apply flex flex-row align-middle justify-center focus-within:border-neutral-500;
 }
 
 .input-text > span {
@@ -140,7 +144,7 @@ input[type='number']::-webkit-outer-spin-button {
 
 /* select input */
 select {
-	@apply p-2 rounded-md border-2 transition-colors dark:bg-neutral-700 dark:border-neutral-700 focus-visible:dark:border-neutral-500;
+	@apply p-2 rounded-md border-2 transition-colors bg-neutral-700 border-neutral-700 focus-visible:border-neutral-500;
 }
 
 /* file input */
@@ -151,5 +155,5 @@ select {
 
 /* 'x' button */
 .close-button {
-	@apply w-8 h-8 rounded-full center absolute top-2 right-2 border-2 dark:border-opacity-0 dark:hover:border-opacity-100 dark:focus-visible:border-opacity-100 dark:border-neutral-500 transition-all dark:bg-neutral-800 dark:active:bg-neutral-500 dark:bg-opacity-50 dark:hover:bg-opacity-70;
+	@apply w-8 h-8 rounded-full center absolute top-2 right-2 border-2 border-opacity-0 hover:border-opacity-100 focus-visible:border-opacity-100 border-neutral-500 transition-all bg-neutral-800 active:bg-neutral-500 bg-opacity-50 hover:bg-opacity-70;
 }
