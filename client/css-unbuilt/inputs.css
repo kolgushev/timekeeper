@@ -20,7 +20,7 @@
 /* buttons */
 input[type='submit'],
 .button {
-	@apply p-2 border-2 min-w-[1.5rem] rounded-md text-base font-pop font-normal transition-colors dark:bg-emerald-600 dark:border-emerald-600 dark:hover:bg-emerald-500 dark:hover:border-emerald-500 dark:active:bg-emerald-800 dark:active:border-emerald-400 focus-visible:dark:border-emerald-400 disabled:dark:bg-emerald-800 disabled:dark:border-emerald-700 disabled:dark:text-gray-100;
+	@apply p-2 border-2 min-w-[1.5rem] rounded-md text-base font-pop font-normal transition-colors active:transition-none dark:bg-emerald-600 dark:border-emerald-600 dark:hover:bg-emerald-500 dark:hover:border-emerald-500 dark:active:bg-emerald-800 dark:active:border-emerald-400 focus-visible:dark:border-emerald-400 disabled:dark:bg-emerald-800 disabled:dark:border-emerald-700 disabled:dark:text-gray-100;
 }
 
 /* range sliders */
@@ -92,6 +92,23 @@ input[type='checkbox']:checked::after {
 
 input[type='checkbox'] + label {
 	@apply grid place-items-center pl-2;
+}
+
+input[type='radio'] {
+	@apply border-2 border-slate-400 bg-slate-700;
+}
+
+input[type='radio']:nth-child(1) {
+	@apply border-red-400 bg-red-700;
+}
+input[type='radio']:nth-child(2) {
+	@apply border-amber-400 bg-amber-700;
+}
+input[type='radio']:nth-child(3) {
+	@apply border-emerald-400 bg-emerald-700;
+}
+input[type='radio']:nth-child(4) {
+	@apply border-sky-400 bg-sky-700;
 }
 
 /* text and number input */

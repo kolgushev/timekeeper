@@ -38,7 +38,6 @@ if(!isProduction) {
         if(!isProduction) {
             settings.x = -1920
             settings.y = 0
-
         }
         
 		window = new BrowserWindow(settings)
