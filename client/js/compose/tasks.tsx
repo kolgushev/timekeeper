@@ -2,15 +2,13 @@ import {
 	FC,
 	ReactElement,
 	FormEventHandler,
-	useState,
 	PropsWithChildren,
 	Component,
+	useState,
+	useEffect,
 } from 'react'
 import { createRoot } from 'react-dom/client'
 import { FaPause, FaPlay } from 'react-icons/fa'
-
-// Render your React component instead
-const taskList = createRoot(document.getElementById('tasklist') as HTMLElement)
 
 const getDotColor = (color: number) => {
 	switch (color) {
@@ -82,22 +80,22 @@ const TaskInput: FC<{
 					color={0}
 					selectedColor={color}
 					onSelected={(color) => setColor(color)}
-				></Dot>
+				/>
 				<Dot
 					color={1}
 					selectedColor={color}
 					onSelected={(color) => setColor(color)}
-				></Dot>
+				/>
 				<Dot
 					color={2}
 					selectedColor={color}
 					onSelected={(color) => setColor(color)}
-				></Dot>
+				/>
 				<Dot
 					color={3}
 					selectedColor={color}
 					onSelected={(color) => setColor(color)}
-				></Dot>
+				/>
 				{/* text input */}
 				<div className="w-max inline-block m-2">
 					<input
@@ -117,10 +115,21 @@ const TaskInput: FC<{
 	)
 }
 
+const pad = (num: number) => Math.floor(num).toString().padStart(2, '0')
+const getSeconds = (elapsed: number) => pad(elapsed % 60)
+const getMinutes = (elapsed: number) => pad(elapsed / 60 % 60)
+const getHours = (elapsed: number) => pad(elapsed / 3600)
+
+const formatTime = (elapsed: number) =>
+	`${elapsed < 3600 ? '' : `${getHours(elapsed)}:`}${getMinutes(
+		elapsed,
+	)}:${getSeconds(elapsed)}`
+
 const Task: FC<
 	PropsWithChildren<{
 		color: number
 		active: boolean
+		elapsed: number
 		onActivate: () => void
 	}>
 > = (props) => {
@@ -139,8 +148,8 @@ const Task: FC<
 				{props.children}
 			</div>
 			{/* timer */}
-			<div className="text-center text-4xl font-pop mx-4 flex-none inline-block">
-				12:34:56
+			<div className="text-center text-4xl font-mono font-bold mx-4 flex-none inline-block">
+				{formatTime(props.elapsed)}
 			</div>
 			{/* play button */}
 			<button
@@ -151,7 +160,7 @@ const Task: FC<
 				}`}
 				onClick={props.onActivate}
 			>
-				{props.active ? <FaPause></FaPause> : <FaPlay></FaPlay>}
+				{props.active ? <FaPause /> : <FaPlay />}
 			</button>
 		</>
 	)
@@ -174,16 +183,26 @@ const TaskContainer: FC<PropsWithChildren<{ active: boolean }>> = (props) => {
 interface TaskData {
 	name: string
 	color: number
-	elapsed: number
 }
 
 const TaskList: FC = () => {
 	const [tasks, setTasks] = useState<TaskData[]>([])
+	const [timers, setTimers] = useState<number[]>([])
 	const [activeId, setActiveId] = useState<number>(-1)
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (activeId >= 0)
+				setTimers(timers.with(activeId, timers[activeId] + 1))
+		}, 1000)
+
+		return () => clearInterval(timer)
+	})
 
 	const pushTasks = (...added: TaskData[]) => {
 		setActiveId(tasks.length + added.length - 1)
 		setTasks([...tasks, ...added])
+		setTimers([...timers, 0])
 	}
 
 	const tasksParsed = tasks.map(({ name, color }, id) => (
@@ -191,6 +210,7 @@ const TaskList: FC = () => {
 			<Task
 				color={color}
 				active={activeId === id}
+				elapsed={timers[id]}
 				onActivate={() => setActiveId(activeId === id ? -1 : id)}
 				key={id}
 			>
@@ -203,7 +223,6 @@ const TaskList: FC = () => {
 		pushTasks({
 			name,
 			color,
-			elapsed: 0,
 		})
 
 	return (
@@ -216,4 +235,33 @@ const TaskList: FC = () => {
 	)
 }
 
-taskList.render(<TaskList></TaskList>)
+const Header: FC<PropsWithChildren> = (props) => {
+	return (
+		<>
+			{/* top cumulative time section */}
+			<div className="overflow-x-auto overflow-y-hidden row-span-1"></div>
+			<div
+				className="overflow-x-hidden overflow-y-auto m-4 p-2 row-span-5 rounded-md dark:bg-neutral-600 drop-shadow-lg"
+			>
+				<div className="w-full h-auto m-4 ml-8 text-5xl font-bold font-ridge">
+					Tasks
+				</div>
+				<div
+					id="tasklist"
+					className="m-4 grid grid-cols-1 xl:grid-cols-2 grid-flow-row gap-4"
+				>
+					{props.children}
+				</div>
+			</div>
+		</>
+	)
+}
+
+// Render your React component instead
+const taskList = createRoot(document.getElementsByTagName('main')[0] as HTMLElement)
+
+taskList.render(
+	<Header>
+		<TaskList />
+	</Header>,
+)
