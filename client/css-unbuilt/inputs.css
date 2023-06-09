@@ -106,13 +106,13 @@ input[type='checkbox'] + label {
 input[type='text'],
 input[type='number'],
 .input-text {
-	@apply text-base 2xl:text-lg font-light font-ridge placeholder:text-neutral-400 text-white;
+	@apply text-base xl:text-lg font-light font-ridge placeholder:text-neutral-400 text-white;
 }
 
 :not(.input-text) > input[type='text'],
 :not(.input-text) > input[type='number'],
 .input-text {
-	@apply p-2 block rounded-md border-2 transition-colors bg-neutral-700 border-neutral-700 focus-visible:border-neutral-500;
+	@apply p-2 block rounded-md border-2 transition-colors bg-neutral-800 border-neutral-800 focus-visible:border-neutral-500;
 }
 
 .input-text {

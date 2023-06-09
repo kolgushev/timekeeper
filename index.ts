@@ -25,8 +25,8 @@ if(!isProduction) {
 			center: true,
 			width: 1920,
 			height: 1080,
-			minWidth: 1080,
-			minHeight: 720,
+			minWidth: 960,
+			minHeight: 540,
 			acceptFirstMouse: true,
 			frame: true,
 			webPreferences: {

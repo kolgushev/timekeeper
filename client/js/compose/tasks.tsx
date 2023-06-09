@@ -39,13 +39,15 @@ const Dot: FC<{
 				props.onSelected?.(props.color)
 				ev.preventDefault()
 			}}
-			className="p-1 w-7 h-full inline-flex justify-center justify-items-center items-center group"
+			className="p-1 w-8 h-8 inline-flex justify-center justify-items-center items-center place-items-center group"
 			tabIndex={1}
 		>
 			<div
 				className={`${
-					props.color === props.selectedColor ? 'w-5 h-5' : 'w-4 h-4'
-				} rounded-full border-2 transition-[width,height,border-color] group-focus-visible:border-white ${dotColor}`}
+					props.color === props.selectedColor
+						? 'w-6 h-6 translate-y-[.1875rem]'
+						: 'w-4 h-4'
+				} rounded-full border-2 transition-[width,height,border-color,transform] duration-75 ease-linear group-focus-visible:border-white ${dotColor}`}
 			></div>
 		</button>
 	)
@@ -74,7 +76,6 @@ const TaskInput: FC<{
 
 	return (
 		<>
-			<hr></hr>
 			<form onSubmit={onFormSubmit} className="text-center w-auto">
 				{/* Radio-style color selection */}
 				<Dot
@@ -124,13 +125,7 @@ const Task: FC<
 	}>
 > = (props) => {
 	return (
-		<div
-			className={`text-center text-2xl w-full p-4 flex flex-row justify-stretch items-center border-2 rounded-xl transition ${
-				props.active
-					? 'bg-neutral-500 border-neutral-400 drop-shadow-xl -translate-y-1'
-					: 'bg-neutral-700 border-neutral-700 drop-shadow-md'
-			}`}
-		>
+		<>
 			{/* colored dot */}
 			<div className="mr-2 w-5 h-full inline-flex justify-center justify-items-center items-center group">
 				<div
@@ -140,8 +135,12 @@ const Task: FC<
 				></div>
 			</div>
 			{/* text */}
-			<div className="text-left mr-3 basis-0 flex-1 text-ellipsis overflow-hidden inline-block">
+			<div className="text-left mr-3 whitespace-nowrap basis-0 flex-1 text-ellipsis overflow-hidden inline-block">
 				{props.children}
+			</div>
+			{/* timer */}
+			<div className="text-center text-4xl font-pop mx-4 flex-none inline-block">
+				12:34:56
 			</div>
 			{/* play button */}
 			<button
@@ -154,6 +153,20 @@ const Task: FC<
 			>
 				{props.active ? <FaPause></FaPause> : <FaPlay></FaPlay>}
 			</button>
+		</>
+	)
+}
+
+const TaskContainer: FC<PropsWithChildren<{ active: boolean }>> = (props) => {
+	return (
+		<div
+			className={`row-span-1 col-span-1 text-center text-2xl w-full p-4 flex flex-row justify-stretch items-center border-2 rounded-xl transition ${
+				props.active
+					? 'bg-neutral-500 border-neutral-400 drop-shadow-xl -translate-y-1'
+					: 'bg-neutral-700 border-neutral-700 drop-shadow-md'
+			}`}
+		>
+			{props.children}
 		</div>
 	)
 }
@@ -174,14 +187,16 @@ const TaskList: FC = () => {
 	}
 
 	const tasksParsed = tasks.map(({ name, color }, id) => (
-		<Task
-			color={color}
-			active={activeId === id}
-			onActivate={() => setActiveId(activeId === id ? -1 : id)}
-			key={id}
-		>
-			{name}
-		</Task>
+		<TaskContainer active={activeId === id}>
+			<Task
+				color={color}
+				active={activeId === id}
+				onActivate={() => setActiveId(activeId === id ? -1 : id)}
+				key={id}
+			>
+				{name}
+			</Task>
+		</TaskContainer>
 	))
 
 	const onFormSubmit = (name: string, color: number) =>
@@ -194,7 +209,9 @@ const TaskList: FC = () => {
 	return (
 		<>
 			{tasksParsed}
-			<TaskInput onFormSubmit={onFormSubmit}></TaskInput>
+			<TaskContainer active={false}>
+				<TaskInput onFormSubmit={onFormSubmit}></TaskInput>
+			</TaskContainer>
 		</>
 	)
 }
