@@ -45,15 +45,11 @@
 }
 
 #tasks::-webkit-scrollbar-track {
-	@apply dark:bg-neutral-700 rounded-r-md overflow-hidden;
+	appearance: none;
 }
 
 #tasks::-webkit-scrollbar-thumb {
 	@apply rounded-md dark:bg-neutral-500;
-
-	box-shadow: 0 0.375rem 0 0 theme('colors.neutral.500'),
-		0 -0.375rem 0 0 theme('colors.neutral.500');
-	
 }
 /* end credit */
 

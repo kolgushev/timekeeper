@@ -28,29 +28,26 @@ const getDotColor = (color: number) => {
 
 const Dot: FC<{
 	color: number
-	selection: boolean
-	selectedColor?: number
-	onSelected?: (color: number) => void
+	selectedColor: number
+	onSelected: (color: number) => void
 }> = (props) => {
 	const dotColor = getDotColor(props.color)
 
 	return (
-		<div
-			onClick={() => props.onSelected?.(props.color)}
-			className={`${
-				props.selection ? 'p-1 w-7' : 'mr-2 w-5'
-			} h-full inline-flex justify-center justify-items-center items-center`}
+		<button
+			onClick={(ev) => {
+				props.onSelected?.(props.color)
+				ev.preventDefault()
+			}}
+			className="p-1 w-7 h-full inline-flex justify-center justify-items-center items-center group"
+			tabIndex={1}
 		>
 			<div
 				className={`${
-					props.selection
-						? props.color === props.selectedColor
-							? 'w-5 h-5'
-							: 'w-4 h-4'
-						: 'w-3.5 h-3.5'
-				} rounded-full border-2 transition-[width,height] ${dotColor}`}
+					props.color === props.selectedColor ? 'w-5 h-5' : 'w-4 h-4'
+				} rounded-full border-2 transition-[width,height,border-color] group-focus-visible:border-white ${dotColor}`}
 			></div>
-		</div>
+		</button>
 	)
 }
 
@@ -79,6 +76,28 @@ const TaskInput: FC<{
 		<>
 			<hr></hr>
 			<form onSubmit={onFormSubmit} className="text-center w-auto">
+				{/* Radio-style color selection */}
+				<Dot
+					color={0}
+					selectedColor={color}
+					onSelected={(color) => setColor(color)}
+				></Dot>
+				<Dot
+					color={1}
+					selectedColor={color}
+					onSelected={(color) => setColor(color)}
+				></Dot>
+				<Dot
+					color={2}
+					selectedColor={color}
+					onSelected={(color) => setColor(color)}
+				></Dot>
+				<Dot
+					color={3}
+					selectedColor={color}
+					onSelected={(color) => setColor(color)}
+				></Dot>
+				{/* text input */}
 				<div className="w-max inline-block m-2">
 					<input
 						id="prompt"
@@ -87,35 +106,11 @@ const TaskInput: FC<{
 						placeholder="New Task"
 						value={taskName}
 						onChange={(event) => setTaskName(event.target.value)}
+						tabIndex={2}
 					/>
 				</div>
-				{/* Radio-style color selection */}
-				<Dot
-					color={0}
-					selection={true}
-					selectedColor={color}
-					onSelected={(color) => setColor(color)}
-				></Dot>
-				<Dot
-					color={1}
-					selection={true}
-					selectedColor={color}
-					onSelected={(color) => setColor(color)}
-				></Dot>
-				<Dot
-					color={2}
-					selection={true}
-					selectedColor={color}
-					onSelected={(color) => setColor(color)}
-				></Dot>
-				<Dot
-					color={3}
-					selection={true}
-					selectedColor={color}
-					onSelected={(color) => setColor(color)}
-				></Dot>
 				{/* Start button */}
-				<input type="submit" value="Add" className="m-2" />
+				<input type="submit" value="Add" className="m-2" tabIndex={3} />
 			</form>
 		</>
 	)
@@ -130,23 +125,31 @@ const Task: FC<
 > = (props) => {
 	return (
 		<div
-			className={`text-center text-2xl w-full p-4 flex flex-row justify-stretch items-center border-2 rounded-xl transition-colors ${
+			className={`text-center text-2xl w-full p-4 flex flex-row justify-stretch items-center border-2 rounded-xl transition ${
 				props.active
-					? 'bg-neutral-700 border-neutral-500 drop-shadow-xl'
-					: 'bg-neutral-500 border-neutral-500 drop-shadow-md'
+					? 'bg-neutral-500 border-neutral-400 drop-shadow-xl -translate-y-1'
+					: 'bg-neutral-700 border-neutral-700 drop-shadow-md'
 			}`}
 		>
 			{/* colored dot */}
-			<Dot color={props.color} selection={false}></Dot>
+			<div className="mr-2 w-5 h-full inline-flex justify-center justify-items-center items-center group">
+				<div
+					className={`w-3.5 h-3.5 rounded-full border-2 transition-[width,height,border-color] group-focus-visible:border-white ${getDotColor(
+						props.color,
+					)}`}
+				></div>
+			</div>
+			{/* text */}
 			<div className="text-left mr-3 basis-0 flex-1 text-ellipsis overflow-hidden inline-block">
 				{props.children}
 			</div>
-			<div
+			{/* play button */}
+			<button
 				className="button w-14 h-14 self-end !rounded-full shadow-lg flex justify-center justify-items-center items-center"
 				onClick={props.onActivate}
 			>
 				{props.active ? <FaPause></FaPause> : <FaPlay></FaPlay>}
-			</div>
+			</button>
 		</div>
 	)
 }
@@ -157,55 +160,39 @@ interface TaskData {
 	elapsed: number
 }
 
-class TaskList extends Component {
-	state: {
-		tasks: TaskData[]
-		activeId: number
-	} = {
-		tasks: [],
-		activeId: -1,
+const TaskList: FC = () => {
+	const [tasks, setTasks] = useState<TaskData[]>([])
+	const [activeId, setActiveId] = useState<number>(-1)
+
+	const pushTasks = (...added: TaskData[]) => {
+		setActiveId(tasks.length + added.length - 1)
+		setTasks([...tasks, ...added])
 	}
 
-	pushTasks(...tasks: TaskData[]) {
-		this.setState({
-			tasks: [...this.state.tasks, ...tasks],
-			activeId: this.state.tasks.length + tasks.length - 1,
+	const tasksParsed = tasks.map(({ name, color }, id) => (
+		<Task
+			color={color}
+			active={activeId === id}
+			onActivate={() => setActiveId(activeId === id ? -1 : id)}
+			key={id}
+		>
+			{name}
+		</Task>
+	))
+
+	const onFormSubmit = (name: string, color: number) =>
+		pushTasks({
+			name,
+			color,
+			elapsed: 0,
 		})
-	}
 
-	setActiveId(id: number) {
-		this.setState({
-			activeId: this.state.activeId === id ? -1 : id,
-			tasks: this.state.tasks,
-		})
-	}
-
-	render() {
-		const tasks = this.state.tasks.map(({ name, color }, id) => (
-			<Task
-				color={color}
-				active={this.state.activeId === id}
-				onActivate={() => this.setActiveId(id)}
-				key={id}
-			>
-				{name}
-			</Task>
-		))
-
-		const onFormSubmit = (name: string, color: number) =>
-			this.pushTasks({
-				name,
-				color,
-				elapsed: 0,
-			})
-
-		return (
-			<>
-				{tasks}
-				<TaskInput onFormSubmit={onFormSubmit}></TaskInput>
-			</>
-		)
-	}
+	return (
+		<>
+			{tasksParsed}
+			<TaskInput onFormSubmit={onFormSubmit}></TaskInput>
+		</>
+	)
 }
 
 taskList.render(<TaskList></TaskList>)

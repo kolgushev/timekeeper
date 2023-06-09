@@ -94,23 +94,6 @@ input[type='checkbox'] + label {
 	@apply grid place-items-center pl-2;
 }
 
-input[type='radio'] {
-	@apply border-2 border-slate-400 bg-slate-700;
-}
-
-input[type='radio']:nth-child(1) {
-	@apply border-red-400 bg-red-700;
-}
-input[type='radio']:nth-child(2) {
-	@apply border-amber-400 bg-amber-700;
-}
-input[type='radio']:nth-child(3) {
-	@apply border-emerald-400 bg-emerald-700;
-}
-input[type='radio']:nth-child(4) {
-	@apply border-sky-400 bg-sky-700;
-}
-
 /* text and number input */
 .horizontal-scroll {
 	@apply overflow-x-scroll;
