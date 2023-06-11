@@ -8,6 +8,7 @@ import {
 	useEffect,
 } from 'react'
 import { createRoot } from 'react-dom/client'
+// TODO: Figure out how to use FA6 for FAXMark to work
 import { FaPause, FaPlay, FaTimes as FaXmark } from 'react-icons/fa'
 
 const getDotColor = (color: number) => {
