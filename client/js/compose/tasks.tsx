@@ -8,7 +8,7 @@ import {
 	useEffect,
 } from 'react'
 import { createRoot } from 'react-dom/client'
-import { FaPause, FaPlay } from 'react-icons/fa'
+import { FaPause, FaPlay, FaTimes as FaXmark } from 'react-icons/fa'
 
 const getDotColor = (color: number) => {
 	switch (color) {
@@ -117,7 +117,7 @@ const TaskInput: FC<{
 
 const pad = (num: number) => Math.floor(num).toString().padStart(2, '0')
 const getSeconds = (elapsed: number) => pad(elapsed % 60)
-const getMinutes = (elapsed: number) => pad(elapsed / 60 % 60)
+const getMinutes = (elapsed: number) => pad((elapsed / 60) % 60)
 const getHours = (elapsed: number) => pad(elapsed / 3600)
 
 const formatTime = (elapsed: number) =>
@@ -131,10 +131,18 @@ const Task: FC<
 		active: boolean
 		elapsed: number
 		onActivate: () => void
+		onRemove: () => void
 	}>
 > = (props) => {
 	return (
 		<>
+			{/* remove button */}
+			<button
+				className="w-8 h-8 flex justify-center justify-items-center items-center"
+				onClick={props.onRemove}
+			>
+				<FaXmark />
+			</button>
 			{/* colored dot */}
 			<div className="mr-2 w-5 h-full inline-flex justify-center justify-items-center items-center group">
 				<div
@@ -185,11 +193,28 @@ interface TaskData {
 	color: number
 }
 
-const TaskList: FC = () => {
-	const [tasks, setTasks] = useState<TaskData[]>([])
-	const [timers, setTimers] = useState<number[]>([])
-	const [activeId, setActiveId] = useState<number>(-1)
+const addTrackedItem = <T extends unknown>(name: string, item: T) => {
+	useEffect(() => {
+		localStorage.setItem(name, JSON.stringify(item))
+	}, [item])
+}
 
+const initState = <T extends unknown>(
+	name: string,
+	defaultValue: T,
+): [T, React.Dispatch<React.SetStateAction<T>>] => {
+	const stored = localStorage.getItem(name)
+
+	if (stored !== null) return useState<T>(JSON.parse(stored))
+	else return useState<T>(defaultValue)
+}
+
+const TaskList: FC = () => {
+	const [tasks, setTasks] = initState<TaskData[]>('tasks', [])
+	const [timers, setTimers] = initState<number[]>('timers', [])
+	const [activeId, setActiveId] = initState<number>('activeId', -1)
+
+	// run the active timer
 	useEffect(() => {
 		const timer = setInterval(() => {
 			if (activeId >= 0)
@@ -199,19 +224,31 @@ const TaskList: FC = () => {
 		return () => clearInterval(timer)
 	})
 
+	// update local storage when values update
+	addTrackedItem('tasks', tasks)
+	addTrackedItem('timers', timers)
+	addTrackedItem('activeId', activeId)
+
 	const pushTasks = (...added: TaskData[]) => {
 		setActiveId(tasks.length + added.length - 1)
 		setTasks([...tasks, ...added])
 		setTimers([...timers, 0])
 	}
 
+	const removeTask = (index: number) => {
+		if (activeId === index) setActiveId(-1)
+		setTasks(tasks.toSpliced(index, 1))
+		setTimers(timers.toSpliced(index, 1))
+	}
+
 	const tasksParsed = tasks.map(({ name, color }, id) => (
-		<TaskContainer active={activeId === id}>
+		<TaskContainer active={activeId === id} key={id}>
 			<Task
 				color={color}
 				active={activeId === id}
 				elapsed={timers[id]}
 				onActivate={() => setActiveId(activeId === id ? -1 : id)}
+				onRemove={() => removeTask(id)}
 				key={id}
 			>
 				{name}
@@ -240,9 +277,7 @@ const Header: FC<PropsWithChildren> = (props) => {
 		<>
 			{/* top cumulative time section */}
 			<div className="overflow-x-auto overflow-y-hidden row-span-1"></div>
-			<div
-				className="overflow-x-hidden overflow-y-auto m-4 p-2 row-span-5 rounded-md dark:bg-neutral-600 drop-shadow-lg"
-			>
+			<div className="overflow-x-hidden overflow-y-auto m-4 p-2 row-span-5 rounded-md dark:bg-neutral-600 drop-shadow-lg">
 				<div className="w-full h-auto m-4 ml-8 text-5xl font-bold font-ridge">
 					Tasks
 				</div>
@@ -258,7 +293,9 @@ const Header: FC<PropsWithChildren> = (props) => {
 }
 
 // Render your React component instead
-const taskList = createRoot(document.getElementsByTagName('main')[0] as HTMLElement)
+const taskList = createRoot(
+	document.getElementsByTagName('main')[0] as HTMLElement,
+)
 
 taskList.render(
 	<Header>
