@@ -198,20 +198,20 @@ interface TaskData {
 	color: number
 }
 
-const addTrackedItem = <T extends unknown>(name: string, item: T) => {
-	useEffect(() => {
-		localStorage.setItem(name, JSON.stringify(item))
-	}, [item])
-}
-
 const initState = <T extends unknown>(
 	name: string,
 	defaultValue: T,
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
 	const stored = localStorage.getItem(name)
+	
+	const [state, setState] = useState<T>(stored === null ? defaultValue : JSON.parse(stored))
 
-	if (stored !== null) return useState<T>(JSON.parse(stored))
-	else return useState<T>(defaultValue)
+	// update local storage when values update
+	useEffect(() => {
+		localStorage.setItem(name, JSON.stringify(state))
+	}, [state])
+	
+	return [state, setState]
 }
 
 const TaskList: FC = () => {
@@ -228,11 +228,6 @@ const TaskList: FC = () => {
 
 		return () => clearInterval(timer)
 	})
-
-	// update local storage when values update
-	addTrackedItem('tasks', tasks)
-	addTrackedItem('timers', timers)
-	addTrackedItem('activeId', activeId)
 
 	const pushTasks = (...added: TaskData[]) => {
 		setActiveId(tasks.length + added.length - 1)
