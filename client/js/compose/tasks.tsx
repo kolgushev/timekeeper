@@ -139,10 +139,14 @@ const Task: FC<
 		<>
 			{/* remove button */}
 			<button
-				className="w-8 h-8 flex justify-center justify-items-center items-center"
+				className={`w-7 h-7 p-2 mr-2 outline-2 outline-transparent rounded-md flex justify-center justify-items-center items-center transition-[outline-color] ${
+					props.active
+					? 'focus-visible:outline-emerald-300'
+					: 'focus-visible:outline-emerald-400'
+				}`}
 				onClick={props.onRemove}
 			>
-				<FaXmark className='w-3' />
+				<FaXmark className="transition-[outline-color]" />
 			</button>
 			{/* colored dot */}
 			<div className="mr-2 w-5 h-full inline-flex justify-center justify-items-center items-center group">
@@ -164,7 +168,7 @@ const Task: FC<
 			<button
 				className={`button w-14 h-14 justify-self-end !rounded-full shadow-lg flex justify-center justify-items-center items-center ${
 					props.active
-						? 'bg-emerald-500 border-emerald-400 focus-visible:border-emerald-200'
+						? 'bg-emerald-500 border-emerald-400 focus-visible:border-emerald-100'
 						: 'bg-emerald-600 border-emerald-600 focus-visible:border-emerald-300'
 				}`}
 				onClick={props.onActivate}
