@@ -142,12 +142,12 @@ const Task: FC<
 				className="w-8 h-8 flex justify-center justify-items-center items-center"
 				onClick={props.onRemove}
 			>
-				<FaXmark />
+				<FaXmark className='w-3' />
 			</button>
 			{/* colored dot */}
 			<div className="mr-2 w-5 h-full inline-flex justify-center justify-items-center items-center group">
 				<div
-					className={`w-3.5 h-3.5 rounded-full border-2 transition-[width,height,border-color] group-focus-visible:border-white ${getDotColor(
+					className={`w-4 h-4 rounded-full border-2 transition-[width,height,border-color] group-focus-visible:border-white ${getDotColor(
 						props.color,
 					)}`}
 				></div>
@@ -162,7 +162,7 @@ const Task: FC<
 			</div>
 			{/* play button */}
 			<button
-				className={`button w-14 h-14 self-end !rounded-full shadow-lg flex justify-center justify-items-center items-center ${
+				className={`button w-14 h-14 justify-self-end !rounded-full shadow-lg flex justify-center justify-items-center items-center ${
 					props.active
 						? 'bg-emerald-500 border-emerald-400 focus-visible:border-emerald-200'
 						: 'bg-emerald-600 border-emerald-600 focus-visible:border-emerald-300'
