@@ -13,9 +13,10 @@
     },
     "include": [
         "**/*.ts",
-        "**/*.tsx", "client/js/compose/not-chat-gpt.js",
+        "**/*.tsx",
     ],
     "exclude": [
         "node_modules",
+        "out",
     ]
 }
