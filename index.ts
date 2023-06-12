@@ -1,4 +1,3 @@
-import 'source-map-support/register'
 import * as dotenv from 'dotenv'
 import { app as electronApp, BrowserWindow, ipcMain, dialog } from 'electron'
 
