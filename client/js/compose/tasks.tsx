@@ -9,7 +9,7 @@ import {
 } from 'react'
 import { createRoot } from 'react-dom/client'
 // TODO: Figure out how to use FA6 for FAXMark to work
-import { FaPause, FaPlay, FaTimes as FaXmark } from 'react-icons/fa'
+import { FaPause, FaPlay, FaTimes as FaXmark, FaHistory as FaResetTimer } from 'react-icons/fa'
 
 const getDotColor = (color: number) => {
 	switch (color) {
@@ -131,6 +131,7 @@ const Task: FC<
 		color: number
 		active: boolean
 		elapsed: number
+		onReset: () => void
 		onActivate: () => void
 		onRemove: () => void
 	}>
@@ -141,8 +142,8 @@ const Task: FC<
 			<button
 				className={`w-7 h-7 p-2 mr-2 outline-2 outline-transparent rounded-md flex justify-center justify-items-center items-center transition-[outline-color] ${
 					props.active
-					? 'focus-visible:outline-emerald-300'
-					: 'focus-visible:outline-emerald-400'
+						? 'focus-visible:outline-emerald-300'
+						: 'focus-visible:outline-emerald-400'
 				}`}
 				onClick={props.onRemove}
 			>
@@ -160,6 +161,17 @@ const Task: FC<
 			<div className="text-left mr-3 whitespace-nowrap basis-0 flex-1 text-ellipsis overflow-hidden inline-block">
 				{props.children}
 			</div>
+			{/* reset button */}
+			<button
+				className={`w-7 h-7 p-1 outline-2 outline-transparent rounded-md flex justify-center justify-items-center items-center transition-[outline-color] ${
+					props.active
+						? 'focus-visible:outline-emerald-300'
+						: 'focus-visible:outline-emerald-400'
+				}`}
+				onClick={props.onReset}
+			>
+				<FaResetTimer className="transition-[outline-color]" />
+			</button>
 			{/* timer */}
 			<div className="text-center text-4xl font-mono font-bold mx-4 flex-none inline-block">
 				{formatTime(props.elapsed)}
@@ -203,14 +215,16 @@ const initState = <T extends unknown>(
 	defaultValue: T,
 ): [T, React.Dispatch<React.SetStateAction<T>>] => {
 	const stored = localStorage.getItem(name)
-	
-	const [state, setState] = useState<T>(stored === null ? defaultValue : JSON.parse(stored))
+
+	const [state, setState] = useState<T>(
+		stored === null ? defaultValue : JSON.parse(stored),
+	)
 
 	// update local storage when values update
 	useEffect(() => {
 		localStorage.setItem(name, JSON.stringify(state))
 	}, [state])
-	
+
 	return [state, setState]
 }
 
@@ -247,6 +261,7 @@ const TaskList: FC = () => {
 				color={color}
 				active={activeId === id}
 				elapsed={timers[id]}
+				onReset={() => setTimers(timers.with(id, 0))}
 				onActivate={() => setActiveId(activeId === id ? -1 : id)}
 				onRemove={() => removeTask(id)}
 				key={id}

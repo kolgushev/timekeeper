@@ -4,7 +4,7 @@ import { app as electronApp, BrowserWindow, ipcMain, dialog } from 'electron'
 
 dotenv.config()
 
-const isProduction = process.env.IS_PRODUCTION === 'true'
+const isProduction = process.env.IS_PRODUCTION !== 'false'
 
 // silence errors
 if(!isProduction) {
