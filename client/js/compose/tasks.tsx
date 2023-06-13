@@ -235,9 +235,13 @@ const TaskList: FC = () => {
 
 	// run the active timer
 	useEffect(() => {
+		let now = Date.now()
+
 		const timer = setInterval(() => {
 			if (activeId >= 0)
-				setTimers(timers.with(activeId, timers[activeId] + 1))
+				setTimers(timers.with(activeId, timers[activeId] + (Date.now() - now) * 0.001))
+
+			now = Date.now()
 		}, 1000)
 
 		return () => clearInterval(timer)
