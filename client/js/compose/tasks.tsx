@@ -255,6 +255,7 @@ const TaskList: FC = () => {
 
 	const removeTask = (index: number) => {
 		if (activeId === index) setActiveId(-1)
+		else if (activeId > index) setActiveId(activeId - 1)
 		setTasks(tasks.toSpliced(index, 1))
 		setTimers(timers.toSpliced(index, 1))
 	}
