@@ -9,7 +9,12 @@ import {
 } from 'react'
 import { createRoot } from 'react-dom/client'
 // TODO: Figure out how to use FA6 for FAXMark to work
-import { FaPause, FaPlay, FaTimes as FaXmark, FaHistory as FaResetTimer } from 'react-icons/fa'
+import {
+	FaPause,
+	FaPlay,
+	FaTimes as FaXmark,
+	FaHistory as FaResetTimer,
+} from 'react-icons/fa'
 
 const getDotColor = (color: number) => {
 	switch (color) {
@@ -232,6 +237,37 @@ const TaskList: FC = () => {
 	const [tasks, setTasks] = initState<TaskData[]>('tasks', [])
 	const [timers, setTimers] = initState<number[]>('timers', [])
 	const [activeId, setActiveId] = initState<number>('activeId', -1)
+	const [lastActiveId, setLastActiveId] = initState<number>('lastActiveId', 0)
+
+	const activate = (index: number) => {
+		setActiveId(index)
+		setLastActiveId(index === -1 ? 0 : index)
+	}
+
+	const pushTasks = (...added: TaskData[]) => {
+		activate(tasks.length + added.length - 1)
+		setTasks([...tasks, ...added])
+		setTimers([...timers, 0])
+	}
+
+	/**
+	 * Removes a task from the list of tasks, given its index
+	 * @param {number} index - index of the task to be removed
+	 */
+	const removeTask = (index: number) => {
+		// If the active task is the one being removed, deactivate it
+		if (activeId === index) setActiveId(-1)
+		// If the active task is after the one being removed, shift it back by one
+		else if (activeId > index) setActiveId(activeId - 1)
+
+		// Do the same for the last active task
+		if (lastActiveId === index) setLastActiveId(0)
+		else if (lastActiveId > index) setLastActiveId(lastActiveId - 1)
+
+		// Remove the task and its corresponding timer
+		setTasks(tasks.toSpliced(index, 1))
+		setTimers(timers.toSpliced(index, 1))
+	}
 
 	// run the active timer
 	useEffect(() => {
@@ -239,7 +275,12 @@ const TaskList: FC = () => {
 
 		const timer = setInterval(() => {
 			if (activeId >= 0)
-				setTimers(timers.with(activeId, timers[activeId] + (Date.now() - now) * 0.001))
+				setTimers(
+					timers.with(
+						activeId,
+						timers[activeId] + (Date.now() - now) * 0.001,
+					),
+				)
 
 			now = Date.now()
 		}, 1000)
@@ -247,18 +288,30 @@ const TaskList: FC = () => {
 		return () => clearInterval(timer)
 	})
 
-	const pushTasks = (...added: TaskData[]) => {
-		setActiveId(tasks.length + added.length - 1)
-		setTasks([...tasks, ...added])
-		setTimers([...timers, 0])
-	}
+	// pause the timer when spacebar is pressed
+	useEffect(() => {
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (event.key === ' ') {
+				// check that the user isn't using any form inputs
+				if (
+					event.target instanceof HTMLInputElement ||
+					event.target instanceof HTMLButtonElement
+				)
+					return
 
-	const removeTask = (index: number) => {
-		if (activeId === index) setActiveId(-1)
-		else if (activeId > index) setActiveId(activeId - 1)
-		setTasks(tasks.toSpliced(index, 1))
-		setTimers(timers.toSpliced(index, 1))
-	}
+				if (activeId === -1) setActiveId(lastActiveId)
+				else setActiveId(-1)
+				console.log(activeId)
+				console.log(lastActiveId)
+			}
+		}
+
+		document.addEventListener('keydown', onKeyDown)
+
+		return () => {
+			document.removeEventListener('keydown', onKeyDown)
+		}
+	})
 
 	const tasksParsed = tasks.map(({ name, color }, id) => (
 		<TaskContainer active={activeId === id} key={id}>
@@ -267,7 +320,9 @@ const TaskList: FC = () => {
 				active={activeId === id}
 				elapsed={timers[id]}
 				onReset={() => setTimers(timers.with(id, 0))}
-				onActivate={() => setActiveId(activeId === id ? -1 : id)}
+				onActivate={() =>
+					activeId === id ? setActiveId(-1) : activate(id)
+				}
 				onRemove={() => removeTask(id)}
 				key={id}
 			>
