@@ -14,6 +14,8 @@ import {
 	FaPlay,
 	FaTimes as FaXmark,
 	FaHistory as FaResetTimer,
+	FaPlus,
+	FaMinus,
 } from 'react-icons/fa'
 
 const getDotColor = (color: number) => {
@@ -126,10 +128,83 @@ const getSeconds = (elapsed: number) => pad(elapsed % 60)
 const getMinutes = (elapsed: number) => pad((elapsed / 60) % 60)
 const getHours = (elapsed: number) => pad(elapsed / 3600)
 
-const formatTime = (elapsed: number) =>
-	`${elapsed < 3600 ? '' : `${getHours(elapsed)}:`}${getMinutes(
-		elapsed,
-	)}:${getSeconds(elapsed)}`
+const MINUTE = 60
+const HOUR = MINUTE * 60
+
+const formatTime = (elapsed: number, includeHours?: boolean) =>
+	`${
+		Math.abs(elapsed) < 3600 && !includeHours ? '' : `${getHours(elapsed)}:`
+	}${getMinutes(elapsed)}:${getSeconds(elapsed)}`
+
+const TimeAddButton: FC<{
+	time: number
+	onActivated: (time: number) => void
+	active: boolean
+}> = (props) => {
+	return (
+		<button
+			className={`h-7 mx-1 outline-2 outline-transparent rounded-md flex justify-center justify-items-center items-center transition-[outline-color] ${
+				props.active
+					? 'focus-visible:outline-emerald-300'
+					: 'focus-visible:outline-emerald-400'
+			}`}
+			onClick={() => props.onActivated(props.time)}
+		>
+			{props.time >= 0 ? '+' : ''}
+			{Math.floor(props.time / MINUTE)}
+		</button>
+	)
+}
+
+const TimeAddButtonMenu: FC<{
+	active: boolean
+	onTimeAdd: (time: number) => void
+}> = (props) => {
+	return (
+		<div className="mx-2 grid grid-rows-2 grid-cols-4 gap-1">
+			<TimeAddButton
+				active={props.active}
+				time={-MINUTE}
+				onActivated={props.onTimeAdd}
+			></TimeAddButton>
+			<TimeAddButton
+				active={props.active}
+				time={-MINUTE * 5}
+				onActivated={props.onTimeAdd}
+			></TimeAddButton>
+			<TimeAddButton
+				active={props.active}
+				time={-MINUTE * 30}
+				onActivated={props.onTimeAdd}
+			></TimeAddButton>
+			<TimeAddButton
+				active={props.active}
+				time={-HOUR}
+				onActivated={props.onTimeAdd}
+			></TimeAddButton>
+			<TimeAddButton
+				active={props.active}
+				time={MINUTE}
+				onActivated={props.onTimeAdd}
+			></TimeAddButton>
+			<TimeAddButton
+				active={props.active}
+				time={MINUTE * 5}
+				onActivated={props.onTimeAdd}
+			></TimeAddButton>
+			<TimeAddButton
+				active={props.active}
+				time={MINUTE * 30}
+				onActivated={props.onTimeAdd}
+			></TimeAddButton>
+			<TimeAddButton
+				active={props.active}
+				time={HOUR}
+				onActivated={props.onTimeAdd}
+			></TimeAddButton>
+		</div>
+	)
+}
 
 const Task: FC<
 	PropsWithChildren<{
@@ -137,10 +212,21 @@ const Task: FC<
 		active: boolean
 		elapsed: number
 		onReset: () => void
+		onAdd: (time: number) => void
 		onActivate: () => void
 		onRemove: () => void
 	}>
 > = (props) => {
+	const [isMenuShown, setIsMenuShown] = useState(false)
+
+	const onShowMenu = () => {
+		setIsMenuShown(!isMenuShown)
+	}
+
+	const onTimeAdd = (time: number) => {
+		props.onAdd(time)
+	}
+
 	return (
 		<>
 			{/* remove button */}
@@ -166,6 +252,14 @@ const Task: FC<
 			<div className="text-left mr-3 whitespace-nowrap basis-0 flex-1 text-ellipsis overflow-hidden inline-block">
 				{props.children}
 			</div>
+
+			{/* Time Add button */}
+			{isMenuShown && (
+				<TimeAddButtonMenu
+					active={isMenuShown}
+					onTimeAdd={onTimeAdd}
+				></TimeAddButtonMenu>
+			)}
 			{/* reset button */}
 			<button
 				className={`w-7 h-7 p-1 outline-2 outline-transparent rounded-md flex justify-center justify-items-center items-center transition-[outline-color] ${
@@ -173,13 +267,28 @@ const Task: FC<
 						? 'focus-visible:outline-emerald-300'
 						: 'focus-visible:outline-emerald-400'
 				}`}
-				onClick={props.onReset}
+				onClick={() => props.onReset()}
 			>
 				<FaResetTimer className="transition-[outline-color]" />
 			</button>
+			{/* Time Add button */}
+			<button
+				className={`w-7 h-7 p-1 mx-2 outline-2 outline-transparent rounded-md flex justify-center justify-items-center items-center transition-[outline-color] ${
+					props.active
+						? 'focus-visible:outline-emerald-300'
+						: 'focus-visible:outline-emerald-400'
+				}`}
+				onClick={onShowMenu}
+			>
+				{isMenuShown ? (
+					<FaMinus className="transition-[outline-color]" />
+				) : (
+					<FaPlus className="transition-[outline-color]" />
+				)}
+			</button>
 			{/* timer */}
 			<div className="text-center text-4xl font-mono font-bold mx-4 flex-none inline-block">
-				{formatTime(props.elapsed)}
+				{formatTime(props.elapsed, isMenuShown)}
 			</div>
 			{/* play button */}
 			<button
@@ -320,6 +429,9 @@ const TaskList: FC = () => {
 				active={activeId === id}
 				elapsed={timers[id]}
 				onReset={() => setTimers(timers.with(id, 0))}
+				onAdd={(time) =>
+					setTimers(timers.with(id, Math.max(timers[id] + time, 0)))
+				}
 				onActivate={() =>
 					activeId === id ? setActiveId(-1) : activate(id)
 				}
@@ -358,7 +470,7 @@ const Header: FC<PropsWithChildren> = (props) => {
 				</div>
 				<div
 					id="tasklist"
-					className="m-4 grid grid-cols-1 xl:grid-cols-2 grid-flow-row gap-4"
+					className="m-4 grid grid-cols-1 2xl:grid-cols-2 grid-flow-row gap-4"
 				>
 					{props.children}
 				</div>
