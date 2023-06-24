@@ -186,48 +186,17 @@ const TimeAddButtonMenu: FC<{
 	active: boolean
 	onTimeAdd: (time: number) => void
 }> = (props) => {
+	const timeValues = [-MINUTE, -MINUTE * 5, -MINUTE * 30, -HOUR, MINUTE, MINUTE * 5, MINUTE * 30, HOUR];
 	return (
 		<div className="mx-2 grid grid-rows-2 grid-cols-4 gap-1">
-			<TimeAddButton
-				active={props.active}
-				time={-MINUTE}
-				onActivated={props.onTimeAdd}
-			></TimeAddButton>
-			<TimeAddButton
-				active={props.active}
-				time={-MINUTE * 5}
-				onActivated={props.onTimeAdd}
-			></TimeAddButton>
-			<TimeAddButton
-				active={props.active}
-				time={-MINUTE * 30}
-				onActivated={props.onTimeAdd}
-			></TimeAddButton>
-			<TimeAddButton
-				active={props.active}
-				time={-HOUR}
-				onActivated={props.onTimeAdd}
-			></TimeAddButton>
-			<TimeAddButton
-				active={props.active}
-				time={MINUTE}
-				onActivated={props.onTimeAdd}
-			></TimeAddButton>
-			<TimeAddButton
-				active={props.active}
-				time={MINUTE * 5}
-				onActivated={props.onTimeAdd}
-			></TimeAddButton>
-			<TimeAddButton
-				active={props.active}
-				time={MINUTE * 30}
-				onActivated={props.onTimeAdd}
-			></TimeAddButton>
-			<TimeAddButton
-				active={props.active}
-				time={HOUR}
-				onActivated={props.onTimeAdd}
-			></TimeAddButton>
+			{timeValues.map((timeValue) => (
+				<TimeAddButton
+					key={timeValue}
+					active={props.active}
+					time={timeValue}
+					onActivated={props.onTimeAdd}
+				></TimeAddButton>
+			))}
 		</div>
 	)
 }
