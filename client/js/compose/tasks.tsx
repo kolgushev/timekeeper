@@ -18,6 +18,32 @@ import {
 	FaMinus,
 } from 'react-icons/fa'
 
+/**
+ * These types already exist and are supported in ECMA2023, but are not recognized in Typescript by default.
+ */
+declare global {
+	interface Array<T> {
+		/**
+		 * Removes and returns the spliced elements from the array.
+		 *
+		 * @param {number} start - The index to start splicing from.
+		 * @param {number} deleteCount - The number of elements to remove.
+		 * @param {T[]} items - The elements to insert in place of the spliced elements.
+		 * @returns {T[]} The spliced elements.
+		 */
+		toSpliced(start: number, deleteCount?: number, ...items: T[]): T[]
+
+		/**
+		 * Returns a new array with the element at the specified index replaced with the given value.
+		 *
+		 * @param {number} index - The index of the element to replace.
+		 * @param {T} value - The new value of the element.
+		 * @returns {T[]} A new array with the replaced element.
+		 */
+		with(index: number, value: T): T[]
+	}
+}
+
 const getDotColor = (color: number) => {
 	switch (color) {
 		default:
@@ -479,7 +505,6 @@ const Header: FC<PropsWithChildren> = (props) => {
 	)
 }
 
-// Render your React component instead
 const taskList = createRoot(
 	document.getElementsByTagName('main')[0] as HTMLElement,
 )
