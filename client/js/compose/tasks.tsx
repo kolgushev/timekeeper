@@ -186,12 +186,21 @@ const TimeAddButtonMenu: FC<{
 	active: boolean
 	onTimeAdd: (time: number) => void
 }> = (props) => {
-	const timeValues = [-MINUTE, -MINUTE * 5, -MINUTE * 30, -HOUR, MINUTE, MINUTE * 5, MINUTE * 30, HOUR];
+	const timeValues = [
+		-MINUTE,
+		-MINUTE * 5,
+		-MINUTE * 30,
+		-HOUR,
+		MINUTE,
+		MINUTE * 5,
+		MINUTE * 30,
+		HOUR,
+	]
 	return (
 		<div className="mx-2 grid grid-rows-2 grid-cols-4 gap-1">
-			{timeValues.map((timeValue) => (
+			{timeValues.map((timeValue, index) => (
 				<TimeAddButton
-					key={timeValue}
+					key={index}
 					active={props.active}
 					time={timeValue}
 					onActivated={props.onTimeAdd}
@@ -405,8 +414,8 @@ const TaskList: FC = () => {
 
 				if (activeId === -1) setActiveId(lastActiveId)
 				else setActiveId(-1)
-				console.log(activeId)
-				console.log(lastActiveId)
+
+				event.preventDefault()
 			}
 		}
 
