@@ -465,7 +465,7 @@ const TaskList: FC = () => {
 					<FaResetTimer className="transition-[outline-color] w-24 h-24" />
 				</button>
 				{/* timer */}
-				<div className="text-center text-9xl font-mono font-bold mx-4 flex-none inline-block">
+				<div className={`text-center text-9xl font-mono font-bold mx-4 flex-none inline-block transition-colors ${activeId === -1 ? 'text-neutral-400' : 'text-white'}`}>
 					{formatTime(timers.reduce((a, b) => a + b, 0), true)}
 				</div>
 			</div>
