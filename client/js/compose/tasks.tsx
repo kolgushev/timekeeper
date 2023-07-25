@@ -455,19 +455,20 @@ const TaskList: FC = () => {
 
 	return (
 		<>
-			{tasksParsed}
-			<TaskContainer active={false}>
-				<TaskInput onFormSubmit={onFormSubmit}></TaskInput>
-			</TaskContainer>
-		</>
-	)
-}
-
-const Header: FC<PropsWithChildren> = (props) => {
-	return (
-		<>
 			{/* top cumulative time section */}
-			<div className="overflow-x-auto overflow-y-hidden row-span-1"></div>
+			<div className="overflow-x-auto overflow-y-hidden row-span-1 grid grid-flow-col place-items-center justify-center">
+				{/* reset button */}
+				<button
+					className="w-32 h-32 outline-2 outline-transparent rounded-md flex justify-center justify-items-center items-center transition-[outline-color] focus-visible:outline-emerald-400"
+					onClick={() => setTimers(timers.map(() => 0))}
+				>
+					<FaResetTimer className="transition-[outline-color] w-24 h-24" />
+				</button>
+				{/* timer */}
+				<div className="text-center text-9xl font-mono font-bold mx-4 flex-none inline-block">
+					{formatTime(timers.reduce((a, b) => a + b, 0), true)}
+				</div>
+			</div>
 			<div className="overflow-x-hidden overflow-y-auto m-4 p-2 row-span-5 rounded-md dark:bg-neutral-600 drop-shadow-lg">
 				<div className="w-full h-auto m-4 ml-8 text-5xl font-bold font-ridge">
 					Tasks
@@ -476,11 +477,18 @@ const Header: FC<PropsWithChildren> = (props) => {
 					id="tasklist"
 					className="m-4 grid grid-cols-1 2xl:grid-cols-2 grid-flow-row gap-4"
 				>
-					{props.children}
+					{tasksParsed}
+					<TaskContainer active={false}>
+						<TaskInput onFormSubmit={onFormSubmit}></TaskInput>
+					</TaskContainer>
 				</div>
 			</div>
 		</>
 	)
+}
+
+const Header: FC<PropsWithChildren> = (props) => {
+	return <>{props.children}</>
 }
 
 const taskList = createRoot(
