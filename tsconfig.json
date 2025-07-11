@@ -10,6 +10,8 @@
         "forceConsistentCasingInFileNames": true,
         "jsx": "react-jsx", // Causes inline XML (JSX code) to be expanded
         "strict": true,
+        "types": ["node", "react"],
+        "skipLibCheck": true,
     },
     "include": [
         "**/*.ts",
