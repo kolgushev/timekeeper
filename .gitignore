@@ -307,3 +307,5 @@ cython_debug/
 
 # --- BUN ---
 bun.lock
+# AppImage runtime
+resources/runtime-*
