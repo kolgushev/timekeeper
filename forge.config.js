@@ -14,6 +14,11 @@ module.exports = {
             name: "@reforged/maker-appimage",
             config: {
                 name: "Timekeeper",
+                options: {
+                    // Use a local runtime so the build does not rely on
+                    // network access when creating the AppImage.
+                    runtime: "./resources/runtime-x86_64",
+                },
             },
         },
     ],

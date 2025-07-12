@@ -15,7 +15,9 @@
     "start:ts:nocomp": "electron .",
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "premake": "npm run build:all && npm run fetch:runtime",
+    "fetch:runtime": "bash scripts/fetch-runtime.sh"
   },
   "author": "Daniel Kolgushev",
   "license": "ISC",
